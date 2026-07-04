@@ -6,7 +6,7 @@ const {
   register,
   login,
   getMe,
-} = require("../controllers/TempauthController");
+} = require("../controllers/authController");
 
 const protect = require("../middleware/authMiddleware");
 
