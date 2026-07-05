@@ -11,6 +11,7 @@ const ReceiptUploader = () => {
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
  const [result, setResult] = useState({
+  title: "",
   merchant: "",
   amount: "",
   category: "",
@@ -40,6 +41,10 @@ const ReceiptUploader = () => {
       const data = await scanReceipt(image);
 
       setResult({
+        title:
+          data.expense.merchant ||
+          data.expense.description ||
+          "Scanned Expense",
   merchant: data.expense.merchant || "",
   amount: data.expense.amount || "",
   category: data.expense.category || "",
@@ -57,13 +62,28 @@ const ReceiptUploader = () => {
   try {
     setSaving(true);
 
-    await saveExpense({
+    console.log("Expense being saved:", {
+  title:
+    result.title ||
+    result.merchant ||
+    result.description ||
+    "Scanned Expense",
   merchant: result.merchant,
   amount: Number(result.amount),
   category: result.category,
   description: result.description,
   date: result.date,
   source: "ocr",
+});
+
+    await saveExpense({
+         title: result.title,
+        merchant: result.merchant,
+        amount: Number(result.amount),
+        category: result.category,
+        description: result.description,
+        date: result.date,
+        source: "ocr",
 });
 
     toast.success("Expense saved successfully!");
@@ -139,6 +159,21 @@ const ReceiptUploader = () => {
 
               <div className="space-y-2">
               <div className="space-y-4">
+
+   <div>
+  <label className="font-medium">Title</label>
+
+  <input
+    className="input-field mt-1"
+    value={result.title}
+    onChange={(e) =>
+      setResult({
+        ...result,
+        title: e.target.value,
+      })
+    }
+  />
+</div>             
 
   <div>
     <label className="font-medium">Merchant</label>
