@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HiUpload, HiTrash } from "react-icons/hi";
 import { scanReceipt } from "../services/receiptService";
-import { saveExpense } from "../services/expenseService";
+import { useExpenses } from "../context/ExpenseContext";
 import toast from "react-hot-toast"
 
 const ReceiptUploader = () => {
@@ -22,6 +22,7 @@ const ReceiptUploader = () => {
   
 
   const navigate=useNavigate();
+  const { addExpense } = useExpenses();
 
   const handleImage = (e) => {
     const file = e.target.files[0];
@@ -76,7 +77,7 @@ const ReceiptUploader = () => {
   source: "ocr",
 });
 
-    await saveExpense({
+    await addExpense({
          title: result.title,
         merchant: result.merchant,
         amount: Number(result.amount),
