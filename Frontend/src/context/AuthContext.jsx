@@ -60,6 +60,20 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     setUser(null);
   };
+ const updateUser = async (userData) => {
+  const { data } = await api.put("/api/users/profile", userData);
+
+  setUser(data);
+
+  return data;
+};
+
+const changePassword = async (currentPassword, newPassword) => {
+  return await api.put("/api/users/change-password", {
+    currentPassword,
+    newPassword,
+  });
+};
 
   return (
     <AuthContext.Provider
@@ -70,6 +84,8 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         fetchUser,
+         updateUser,
+         changePassword,
         isAuthenticated: !!user,
       }}
     >

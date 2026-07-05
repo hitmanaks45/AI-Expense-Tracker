@@ -7,7 +7,7 @@ import Modal from '../components/Modal';
 import { useAuth } from '../context/AuthContext';
 
 const Profile = () => {
-  const { user, logout, updateUser } = useAuth();
+  const { user, logout, updateUser ,changePassword,} = useAuth();
   const navigate = useNavigate();
 
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -19,32 +19,61 @@ const Profile = () => {
   const [passwordForm, setPasswordForm] = useState({ current: '', newPass: '', confirm: '' });
   const [passwordError, setPasswordError] = useState('');
 
-  const handleProfileSave = () => {
-    updateUser(profileForm);
-    setIsEditingProfile(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+const handleProfileSave = async () => {
+  try {
+    await updateUser(profileForm);
 
-  const handlePasswordChange = () => {
-    if (!passwordForm.current) {
-      setPasswordError('Enter current password');
-      return;
-    }
-    if (passwordForm.newPass.length < 6) {
-      setPasswordError('New password must be at least 6 characters');
-      return;
-    }
-    if (passwordForm.newPass !== passwordForm.confirm) {
-      setPasswordError('Passwords do not match');
-      return;
-    }
-    setIsChangingPassword(false);
-    setPasswordForm({ current: '', newPass: '', confirm: '' });
-    setPasswordError('');
+    setIsEditingProfile(false);
+
     setSaved(true);
+
     setTimeout(() => setSaved(false), 2000);
-  };
+  } catch (err) {
+    alert(err.response?.data?.message || "Update failed");
+  }
+};
+
+const handlePasswordChange = async () => {
+  if (!passwordForm.current) {
+    setPasswordError("Enter current password");
+    return;
+  }
+
+  if (passwordForm.newPass.length < 6) {
+    setPasswordError("New password must be at least 6 characters");
+    return;
+  }
+
+  if (passwordForm.newPass !== passwordForm.confirm) {
+    setPasswordError("Passwords do not match");
+    return;
+  }
+
+  try {
+    await changePassword(
+      passwordForm.current,
+      passwordForm.newPass
+    );
+
+    setIsChangingPassword(false);
+
+    setPasswordForm({
+      current: "",
+      newPass: "",
+      confirm: "",
+    });
+
+    setPasswordError("");
+
+    setSaved(true);
+
+    setTimeout(() => setSaved(false), 2000);
+  } catch (err) {
+    setPasswordError(
+      err.response?.data?.message || "Failed to change password"
+    );
+  }
+};
 
   const handleLogout = () => {
     logout();
