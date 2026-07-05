@@ -15,13 +15,15 @@ const scanReceipt = async (req, res) => {
       });
     }
 
-    const aiResult = await scanReceiptWithAI(req.file.path);
+    const aiResult = await scanReceiptWithAI(
+  req.file.buffer,
+  req.file.mimetype
+);
 
     // Gemini sometimes wraps JSON in ```json ... ```
     const parsed = extractJSON(aiResult);
 
     // delete uploaded image after processing
-    fs.unlinkSync(req.file.path);
 
     res.json({
       success: true,

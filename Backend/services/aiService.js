@@ -26,12 +26,12 @@ const generateResponse = async (prompt) => {
 };
 
 // ---------- IMAGE ----------
-const scanReceiptWithAI = async (imagePath) => {
+const scanReceiptWithAI = async (imageBuffer, mimeType) => {
   try {
     const image = {
       inlineData: {
-        data: fs.readFileSync(imagePath).toString("base64"),
-        mimeType: "image/jpeg",
+        data: imageBuffer.toString("base64"),
+          mimeType,
       },
     };
 
